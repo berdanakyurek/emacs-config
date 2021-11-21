@@ -47,7 +47,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar user-data-directory (getenv "EMACS_STORAGE_LOCATION"))
 (unless user-data-directory
-  (setq user-data-directory "~/Nextcloud"))
+  (setq user-data-directory "~/Documents"))
 
 (setq-default user-full-name "Berdan Akyurek"
               user-mail-address "berdanakyurek17@gmail.com"
@@ -268,6 +268,7 @@
 (global-set-key (kbd "C-c <right>") 'hs-show-block)
 (global-set-key (kbd "C-c <left>") 'hs-hide-block)
 (global-set-key (kbd "C-c <down>") 'hs-toggle-hiding)
+(global-set-key (kbd "C-c r e") 'restart-emacs)
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 (define-key prog-mode-map (kbd "<tab>") 'indent-for-tab-command)
@@ -294,7 +295,9 @@
                           (bookmarks . 5)
                           (projects . 5)
                           (agenda . 5))
-        dashboard-banner-logo-title "Emacs"))
+        dashboard-banner-logo-title "Ve düşmanlar ki kanıma susamışlar, kanlarına susamışım."))
+;;Test
+(setq dashboard-set-heading-icons t)
 
 (use-package isearch :ensure nil :demand t :bind (("C-c s" . isearch-forward)))
 
@@ -694,9 +697,11 @@
 (use-package org-protocol :ensure nil)
 
 
-;; (use-package org-agenda :ensure nil
-;;   :init (setq-default org-agenda-files (list org-directory))
-;;   :bind ("C-c a" . org-agenda))
+
+(use-package org-agenda :ensure nil
+  :init (setq-default org-agenda-files (list org-directory))
+  :bind ("C-c a" . org-agenda))
+
 
 (use-package org-tempo :after org)
 
@@ -1169,3 +1174,17 @@
                100)
           '(85 . 50) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
+
+;; Matrix client
+
+;; Install and load `quelpa-use-package'.
+;;(package-install 'quelpa-use-package)
+(require 'quelpa-use-package)
+
+;; Install `plz' HTTP library (not on MELPA yet).
+(use-package plz
+  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
+
+;; Install Ement.
+(use-package ement
+  :quelpa (ement :fetcher github :repo "alphapapa/ement.el"))
