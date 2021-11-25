@@ -1175,16 +1175,39 @@
           '(85 . 50) '(100 . 100)))))
 (global-set-key (kbd "C-c t") 'toggle-transparency)
 
-;; Matrix client
+;; ;; Matrix client
 
-;; Install and load `quelpa-use-package'.
-;;(package-install 'quelpa-use-package)
-(require 'quelpa-use-package)
+;; ;; Install and load `quelpa-use-package'.
+;; ;;(package-install 'quelpa-use-package)
+;; (require 'quelpa-use-package)
 
-;; Install `plz' HTTP library (not on MELPA yet).
-(use-package plz
-  :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
+;; ;; Install `plz' HTTP library (not on MELPA yet).
+;; (use-package plz
+;;   :quelpa (plz :fetcher github :repo "alphapapa/plz.el"))
 
-;; Install Ement.
-(use-package ement
-  :quelpa (ement :fetcher github :repo "alphapapa/ement.el"))
+;; ;; Install Ement.
+;; (use-package ement
+;;   :quelpa (ement :fetcher github :repo "alphapapa/ement.el"))
+
+
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-one t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(setq doom-theme 'doom-one-light)
+
+(quelpa '(emacsconf-update :fetcher url :url "https://raw.githubusercontent.com/emacsconf/emacsconf-el/main/emacsconf-update.el"))
