@@ -358,8 +358,8 @@
 
 (use-package helm-tramp)
 
-(use-package helm-fd
-  :bind ("C-c h f" . helm-fd))
+;; (use-package helm-fd
+;;   :bind ("C-c h f" . helm-fd))
 
 (use-package helm-swoop
   :bind
@@ -564,11 +564,11 @@
 
 (use-package company-quickhelp :config (company-quickhelp-mode t))
 
-(use-package company-lsp
-  :after company lsp
-  :config (push 'company-lsp company-backends)
-  :config (setq-default company-lsp-enable-recompletion t
-                        company-lsp-enable-snippet t))
+;; (use-package company-lsp
+;;   :after company lsp
+;;   :config (push 'company-lsp company-backends)
+;;   :config (setq-default company-lsp-enable-recompletion t
+;;                         company-lsp-enable-snippet t))
 
 (use-package magit :bind ("C-c g s" . magit-status))
 
@@ -703,7 +703,7 @@
   :bind ("C-c a" . org-agenda))
 
 
-(use-package org-tempo :after org)
+;;(use-package org-tempo :after org)
 
 (use-package biblio)
 
@@ -1122,29 +1122,29 @@
   (move-end-of-line nil)
   (hs-hide-block))
 
-(require 'eaf)
+;; (require 'eaf)
 
-(require 'eaf-netease-cloud-music)
-(require 'eaf-system-monitor)
-(require 'eaf-browser)
-(require 'eaf-terminal)
-(require 'eaf-file-manager)
-(require 'eaf-jupyter)
-(require 'eaf-file-browser)
-;;(require 'eaf-mermaid)
-(require 'eaf-markdown-previewer)
-(require 'eaf-camera)
-(require 'eaf-org-previewer)
-(require 'eaf-rss-reader)
-;; (require 'eaf-pdf-viewer)
-(require 'eaf-airshare)
-(require 'eaf-mindmap)
-(require 'eaf-music-player)
-(require 'eaf-vue-demo)
-(require 'eaf-video-player)
-(require 'eaf-file-sender)
-(require 'eaf-demo)
-(require 'eaf-image-viewer)
+;; (require 'eaf-netease-cloud-music)
+;; (require 'eaf-system-monitor)
+;; (require 'eaf-browser)
+;; (require 'eaf-terminal)
+;; (require 'eaf-file-manager)
+;; (require 'eaf-jupyter)
+;; (require 'eaf-file-browser)
+;; ;;(require 'eaf-mermaid)
+;; (require 'eaf-markdown-previewer)
+;; (require 'eaf-camera)
+;; (require 'eaf-org-previewer)
+;; (require 'eaf-rss-reader)
+;; ;; (require 'eaf-pdf-viewer)
+;; (require 'eaf-airshare)
+;; (require 'eaf-mindmap)
+;; (require 'eaf-music-player)
+;; (require 'eaf-vue-demo)
+;; (require 'eaf-video-player)
+;; (require 'eaf-file-sender)
+;; (require 'eaf-demo)
+;; (require 'eaf-image-viewer)
 
 (setq erc-server "irc.libera.chat"
       erc-nick "ararat"
