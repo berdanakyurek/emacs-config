@@ -234,6 +234,7 @@
            fill-column)))
     (call-interactively #'fill-paragraph)))
 
+
 (defun scroll-down-in-place (n)
   (interactive "p")
   (forward-line (* -1 n))
@@ -258,6 +259,7 @@
 (global-set-key (kbd "C-c C-k") 'kill-other-buffers)
 (global-set-key (kbd "C-c d") 'duplicate-line-or-region)
 (global-set-key (kbd "C-c e r") 'eval-region)
+(global-set-key (kbd "C-c /") 'comment-region)
 (global-set-key (kbd "C-c u") 'uncomment-region)
 (global-set-key (kbd "C-S-d") 'delete-backward-char)
 (global-set-key (kbd "M-D") 'backward-kill-word)
@@ -290,11 +292,9 @@
    ;; initial-buffer-choice (lambda () (get-buffer "*dashboard*"))
         dashboard-center-content t
         dashboard-startup-banner 'logo
-        dashboard-items '((scratch . 1)
-                          (recents  . 5)
+        dashboard-items '((recents  . 5)
                           (bookmarks . 5)
-                          (projects . 5)
-                          (agenda . 5))
+                          (projects . 5))
         dashboard-banner-logo-title "Ve düşmanlar ki kanıma susamışlar, kanlarına susamışım."))
 ;;Test
 (setq dashboard-set-heading-icons t)
@@ -472,9 +472,9 @@
                   ("https://eli.thegreenplace.net/feeds/all.atom.xml" cpp)
                   ("https://www.evanjones.ca/index.rss" other)
                   ("https://jvns.ca/atom.xml" other)
-                  ("https://aphyr.com/posts.atom" other)
                   ("https://brooker.co.za/blog/rss.xml" other)
                   ("https://rachelbythebay.com/w/atom.xml" other)
+                  ("https://aphyr.com/posts.atom" other)
                   ("https://mrale.ph/feed.xml" other)
                   ("https://medium.com/feed/@steve.yegge" other)
                   ("https://research.swtch.com/" other)
@@ -976,9 +976,10 @@
 
 (use-package beacon
   :init (beacon-mode 1)
-  :config (setq-default beacon-blink-when-point-moves-vertically 20
-                        beacon-blink-when-buffer-changes nil
-                        beacon-blink-when-window-changes nil))
+  :config (setq-default beacon-blink-when-point-moves-vertically 30
+                        beacon-blink-when-buffer-changes t
+                        beacon-blink-when-window-changes t
+                        beacon-color "#666600"))
 
 (use-package neotree
   :after projectile
@@ -1021,8 +1022,8 @@
 ;;   :init
 ;;   (marginalia-mode)
 ;;   (advice-add #'marginalia-cycle :after
-;;               (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhibit))))
-;;   ;; (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+;;               (lambda () (when (bound-and-true-p selectrum-mode) (selectrum-exhIbit))))
+;;   ;; (Setq Marginalia-Annotators '(Marginalia-annotators-heavy marginalia-annotators-light nil))
 ;; )
 
 ;; (use-package orderless
@@ -1105,7 +1106,7 @@
   :preface
   (defun vterm-next-prompt () (interactive) (re-search-forward "msi.*\\$ " nil 'move))
   (defun vterm-prev-prompt () (interactive)
-         (move-beginning-of-line nil)
+          (move-beginning-of-line nil)
          (re-search-backward "msi.*\\$ " nil 'move)
          (re-search-forward "\\$ " nil 'move))
   :bind
@@ -1178,8 +1179,8 @@
 ;; ;; Matrix client
 
 ;; ;; Install and load `quelpa-use-package'.
-;; ;;(package-install 'quelpa-use-package)
-;; (require 'quelpa-use-package)
+;;(package-install 'quelpa-use-package)
+(require 'quelpa-use-package)
 
 ;; ;; Install `plz' HTTP library (not on MELPA yet).
 ;; (use-package plz
@@ -1211,3 +1212,30 @@
 (setq doom-theme 'doom-one-light)
 
 (quelpa '(emacsconf-update :fetcher url :url "https://raw.githubusercontent.com/emacsconf/emacsconf-el/main/emacsconf-update.el"))
+
+
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+(straight-use-package 'use-package)
+(put 'narrow-to-region 'disabled nil)
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+
+
+;; Start with agenda on right
+(org-agenda-list)
+(org-agenda-list)
+(delete-other-windows)
+(split-window-right)
