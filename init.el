@@ -37,7 +37,6 @@
                 auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory))
-
 (defvar use-other-window-alist
   '((display-buffer-use-some-window display-buffer-pop-up-window)
     (inhibit-same-window . t)))
@@ -248,8 +247,8 @@
     (scroll-up n)))
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 
-(global-set-key (kbd "C-<tab>") #'next-buffer)
-(global-set-key (kbd "<C-iso-lefttab>") #'previous-buffer)
+;; (global-set-key (kbd "C-<tab>") #'next-buffer)
+;; (global-set-key (kbd "<C-iso-lefttab>") #'previous-buffer)
 
 (global-set-key (kbd "M-n") 'scroll-up-in-place)
 (global-set-key (kbd "M-p") 'scroll-down-in-place)
@@ -267,9 +266,9 @@
 (global-set-key (kbd "M-k") 'kill-whole-line)
 (global-set-key (kbd "M-w") 'xah-copy-line-or-region) ; copy
 (global-set-key (kbd "RET") 'newline-and-indent)
-(global-set-key (kbd "C-c <right>") 'hs-show-block)
-(global-set-key (kbd "C-c <left>") 'hs-hide-block)
-(global-set-key (kbd "C-c <down>") 'hs-toggle-hiding)
+;; (global-set-key (kbd "C-c <right>") 'hs-show-block)
+;; (global-set-key (kbd "C-c <left>") 'hs-hide-block)
+;; (global-set-key (kbd "C-c <down>") 'hs-toggle-hiding)
 (global-set-key (kbd "C-c r e") 'restart-emacs)
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
@@ -305,7 +304,6 @@
 ;;          Helm          ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Helm packages for other modules will be near their corresponding modules, not in here
-
 (use-package helm
   :diminish helm-mode
   :commands helm-autoresize-mode
@@ -324,6 +322,7 @@
    ("C-c C-r" . helm-resume)
    ("<f6>" . helm-imenu)
    :map helm-map
+   ("TAB" . 'helm-execute-persistent-action)
    ("<tab>" . helm-execute-persistent-action)
    ("<left>" . helm-previous-source)
    ("<right>" . helm-next-source))
@@ -451,41 +450,49 @@
     (when (buffer-live-p buf)
       (kill-buffer buf))))
 
-(use-package elfeed
-  :init
-  (setq-default elfeed-feeds
-                '(("http://research.swtch.com/feeds/posts/default" other)
-                  ("http://bitbashing.io/feed.xml" other)
-                  ("http://preshing.com/feed" other)
-                  ("http://danluu.com/atom.xml" other)
-                  ("http://tenderlovemaking.com/atom.xml" other)
-                  ("http://feeds.feedburner.com/codinghorror/" other)
-                  ("http://www.snarky.ca/feed" other)
-                  ("http://blog.regehr.org/feed" cpp)
-                  ("https://blog.acolyer.org/feed/" other)
-                  ("https://randomascii.wordpress.com/" other)
-                  ("http://planet.emacsen.org/atom.xml" emacs)
-                  ("http://planet.gnome.org/rss20.xml" gnome)
-                  ("http://arne-mertz.de/feed/" cpp)
-                  ("http://zipcpu.com/" fpga)
-                  ("https://code-cartoons.com/feed" other)
-                  ("https://eli.thegreenplace.net/feeds/all.atom.xml" cpp)
-                  ("https://www.evanjones.ca/index.rss" other)
-                  ("https://jvns.ca/atom.xml" other)
-                  ("https://brooker.co.za/blog/rss.xml" other)
-                  ("https://rachelbythebay.com/w/atom.xml" other)
-                  ("https://aphyr.com/posts.atom" other)
-                  ("https://mrale.ph/feed.xml" other)
-                  ("https://medium.com/feed/@steve.yegge" other)
-                  ("https://research.swtch.com/" other)
-                  ("http://aras-p.info/atom.xml" other)
-                  ("http://city-journal.org/rss" other)
-                  ("https://what-if.xkcd.com/feed.atom" xkcd)
-                  ("http://xkcd.com/rss.xml" xkcd)
-                  ("https://esoteric.codes/rss" other)
-                  ("http://irreal.org/blog/?feed=rss2" other))
-                elfeed-show-entry-switch #'pop-to-buffer
-                elfeed-show-entry-delete #'+rss/delete-pane))
+
+;; (use-package elfeed
+;;   :init
+;;   (setq-default elfeed-feeds
+;;                 '(("http://research.swtch.com/feeds/posts/default" other)
+;;                   ("http://bitbashing.io/feed.xml" other)
+;;                   ("http://preshing.com/feed" other)
+;;                   ("http://danluu.com/atom.xml" other)
+;;                   ("http://tenderlovemaking.com/atom.xml" other)
+;;                   ("http://feeds.feedburner.com/codinghorror/" other)
+;;                   ("http://www.snarky.ca/feed" other)
+;;                   ("http://blog.regehr.org/feed" cpp)
+;;                   ("https://blog.acolyer.org/feed/" other)
+;;                   ("https://randomascii.wordpress.com/" other)
+;;                   ("http://planet.emacsen.org/atom.xml" emacs)
+;;                   ("http://planet.gnome.org/rss20.xml" gnome)
+;;                   ("http://arne-mertz.de/feed/" cpp)
+;;                   ("http://zipcpu.com/" fpga)
+;;                   ("https://code-cartoons.com/feed" other)
+;;                   ("https://eli.thegreenplace.net/feeds/all.atom.xml" cpp)
+;;                   ("https://www.evanjones.ca/index.rss" other)
+;;                   ("https://jvns.ca/atom.xml" other)
+;;                   ("https://brooker.co.za/blog/rss.xml" other)
+;;                   ("https://rachelbythebay.com/w/atom.xml" other)
+;;                   ("https://aphyr.com/posts.atom" other)
+;;                   ("https://mrale.ph/feed.xml" other)
+;;                   ("https://medium.com/feed/@steve.yegge" other)
+;;                   ("https://research.swtch.com/" other)
+;;                   ("http://aras-p.info/atom.xml" other)
+;;                   ("http://city-journal.org/rss" other)
+;;                   ("https://what-if.xkcd.com/feed.atom" xkcd)
+;;                   ("http://xkcd.com/rss.xml" xkcd)
+;;                   ("https://esoteric.codes/rss" other)
+;;                   ("http://irreal.org/blog/?feed=rss2" other))
+;;                 elfeed-show-entry-switch #'pop-to-buffer
+;;                 elfeed-show-entry-delete #'+rss/delete-pane))
+
+(use-package elfeed)
+;; Load elfeed-org
+(require 'elfeed-org)
+(setq rmh-elfeed-org-files (list "~/Documents/Notes/elfeed.org"))
+(elfeed-org)
+;; (add-hook 'emacs-startup-hook (lambda () (run-at-time 5 5 'elfeed-update)))
 
 (use-package vlf
   :after dired
@@ -720,7 +727,7 @@
   (c-set-offset 'substatement-open 0)
   (c-set-offset 'innamespace 0)
   (custom-set-variables '(c-noise-macro-names '("constexpr")))
-  (setq-default c-default-style "stroustrup"
+  (setq-default c-default-style "gnu"
                 c-basic-offset 4
                 c-indent-level 4
                 access-label 0
@@ -783,13 +790,6 @@
 ;;   (dap-tooltip-mode 1))
 
 ;; (use-package dap-lldb)
-
-(use-package origami
-  :hook (prog-mode . origami-mode)
-  :bind
-  ("C-c ," . origami-toggle-node)
-  ("C-c C-." . origami-close-all-nodes)
-  ("C-c C->" . origami-open-all-nodes))
 
 ;; (use-package lsp-origami :hook origami-mode)
 
@@ -882,8 +882,10 @@
   :after treemacs persp-mode
   :config (treemacs-set-scope-type 'Perspectives))
 
-(use-package dockerfile-mode :mode ("Dockerfile\\'" "\\.docker"))
-(use-package docker-compose-mode :mode ("docker-compose\\.yml\\'" "-compose.yml\\'"))
+(use-package dockerfile-mode
+  :mode ("Dockerfile\\'" "\\.docker"))
+(use-package docker-compose-mode
+  :mode ("docker-compose\\.yml\\'" "-compose.yml\\'"))
 
 ;; (use-package docker)
 
@@ -1123,30 +1125,6 @@
   (move-end-of-line nil)
   (hs-hide-block))
 
-;; (require 'eaf)
-
-;; (require 'eaf-netease-cloud-music)
-;; (require 'eaf-system-monitor)
-;; (require 'eaf-browser)
-;; (require 'eaf-terminal)
-;; (require 'eaf-file-manager)
-;; (require 'eaf-jupyter)
-;; (require 'eaf-file-browser)
-;; ;;(require 'eaf-mermaid)
-;; (require 'eaf-markdown-previewer)
-;; (require 'eaf-camera)
-;; (require 'eaf-org-previewer)
-;; (require 'eaf-rss-reader)
-;; ;; (require 'eaf-pdf-viewer)
-;; (require 'eaf-airshare)
-;; (require 'eaf-mindmap)
-;; (require 'eaf-music-player)
-;; (require 'eaf-vue-demo)
-;; (require 'eaf-video-player)
-;; (require 'eaf-file-sender)
-;; (require 'eaf-demo)
-;; (require 'eaf-image-viewer)
-
 (setq erc-server "irc.libera.chat"
       erc-nick "ararat"
       erc-user-full-name "unknown"
@@ -1234,8 +1212,53 @@
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
 
+(defun my-init-hook ()
+  (split-window-right)
+  (let ((org-agenda-window-setup 'other-window))
+    (org-agenda nil "a"))
+  (split-window-below)
+  (other-window 1)
+  (elfeed)
+  (other-window 1))
+
+(add-hook 'window-setup-hook #'my-init-hook)
+
 ;; Start with agenda on right
-(org-agenda-list)
-(org-agenda-list)
-(delete-other-windows)
-(split-window-right)
+;; (org-agenda-list)
+;; (delete-other-windows)
+;; (split-window-right)
+;; (switch-to-buffer "*dashboard*")
+;;
+
+;;(split-window-below)
+;;(elfeed)
+
+;;;;;;;;;;;
+;; HYDRA ;;
+;;;;;;;;;;;
+
+(defhydra hydra-zoom (global-map "<f2>")
+  "zoom"
+  ("g" text-scale-increase "in")
+  ("l" text-scale-decrease "out"))
+
+(defhydra hydra-switch-buffer (global-map "C-x")
+  "Switch Buffer"
+  ("<left>" previous-buffer "Previous")
+  ("<right>" next-buffer "Next"))
+
+(defhydra hydra-other-window (global-map "C-x")
+  ("o" other-window "Next"))
+
+(global-set-key (kbd "C-c m") 'mark-more-like-this-extended)
+
+;; Auto Highlight Symbol Mode
+(use-package ahs)
+(add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
+(custom-set-faces
+ '(ahs-face ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold))))
+ '(ahs-face-unfocused ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold))))
+ '(ahs-plugin-default-face ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold))))
+ '(ahs-plugin-default-face-unfocused ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold)))))
+
+(add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
