@@ -1213,13 +1213,19 @@
 
 
 (defun my-init-hook ()
-  (split-window-right)
-  (let ((org-agenda-window-setup 'other-window))
-    (org-agenda nil "a"))
-  (split-window-below)
-  (other-window 1)
-  (elfeed)
-  (other-window 1))
+  (if (equal (buffer-name) "*dashboard*")
+      (progn
+       (split-window-right)
+       (let ((org-agenda-window-setup 'other-window))
+         (org-agenda nil "a"))
+       (split-window-below)
+       (other-window 1)
+       (elfeed)
+       (other-window 1))
+    )
+
+  )
+
 
 (add-hook 'window-setup-hook #'my-init-hook)
 
