@@ -250,10 +250,11 @@
 ;; (global-set-key (kbd "C-<tab>") #'next-buffer)
 ;; (global-set-key (kbd "<C-iso-lefttab>") #'previous-buffer)
 
+
 (global-set-key (kbd "M-n") 'scroll-up-in-place)
 (global-set-key (kbd "M-p") 'scroll-down-in-place)
 (global-set-key (kbd "<f7>") 'eww)
-(global-set-key (kbd "<f8>") 'vterm)
+(global-set-key (kbd "<f8>") 'vterm-toggle)
 (global-set-key (kbd "C-M-;") 'my-align-comments)
 (global-set-key (kbd "C-c C-k") 'kill-other-buffers)
 (global-set-key (kbd "C-c d") 'duplicate-line-or-region)
@@ -1104,7 +1105,7 @@
 ;; (use-package consult-flycheck :bind (:map flycheck-command-map ("!" . consult-flycheck)))
 (use-package vterm
   :commands (vterm-next-prompt vterm-prev-prompt)
-  ;; :config (add-to-list 'display-buffer-alist (cons "\\*vterm" use-other-window-alist))
+  :config (add-to-list 'display-buffer-alist (cons "\\*vterm" use-other-window-alist))
   :preface
   (defun vterm-next-prompt () (interactive) (re-search-forward "msi.*\\$ " nil 'move))
   (defun vterm-prev-prompt () (interactive)
@@ -1112,7 +1113,9 @@
          (re-search-backward "msi.*\\$ " nil 'move)
          (re-search-forward "\\$ " nil 'move))
   :bind
-  ;; ("<f8>" . vterm)
+  ("<f8>" . vterm-toggle)
+  (:map vterm-mode-map
+        ("<f8>" . vterm-toggle))
   (:map vterm-copy-mode-map
         ("C-<" . vterm-prev-prompt)
         ("C-," . vterm-next-prompt)))
