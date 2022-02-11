@@ -674,7 +674,7 @@
   (org-mode . auto-fill-mode)
   :bind (:map org-mode-map ("C-c C-." . org-time-stamp-inactive)))
 
-
+(add-hook 'org-mode-hook #'org-bullets-mode)
 
 (use-package org-babel :ensure nil
   :config
@@ -1271,3 +1271,9 @@
  '(ahs-plugin-default-face-unfocused ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold)))))
 
 (add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
+
+(add-hook 'org-mode-hook 'org-fragtog-mode)
+
+;; PDF arrangements
+(add-hook 'pdf-view-mode-hook
+          (lambda () (local-set-key (kbd "M-w") #'pdf-view-kill-ring-save)))
