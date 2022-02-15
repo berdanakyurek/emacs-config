@@ -1115,6 +1115,7 @@
   :bind
   ("<f8>" . vterm-toggle)
   (:map vterm-mode-map
+        ("M-w" . xah-copy-line-or-region)
         ("<f8>" . vterm-toggle))
   (:map vterm-copy-mode-map
         ("C-<" . vterm-prev-prompt)
