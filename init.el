@@ -1281,14 +1281,16 @@
   "After searching, jumps to new opened buffer"
   (interactive)
   (pdf-occur (read-string "Enter search regex: "))
-  (pop-to-buffer "*PDF-Occur*")
-  (set-window-parameter (selected-window) 'no-other-window t))
+  (pop-to-buffer "*PDF-Occur*"))
 
 (defun pdf-occur-goto-occurence-kill-search-buffer ()
   "After enter button, pdf occur buffer is closed"
   (interactive)
   (pdf-occur-goto-occurrence)
-  (kill-buffer "*PDF-Occur*"))
+  (let ((pdfbuf (current-buffer)))
+       (pop-to-buffer "*PDF-Occur*")
+       (tablist-quit)
+       (pop-to-buffer pdfbuf)))
 
 ;; PDF arrangements
 (add-hook 'pdf-view-mode-hook
