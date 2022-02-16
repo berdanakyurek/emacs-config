@@ -368,7 +368,8 @@
   :init (setq-default helm-swoop-split-with-multiple-windows nil
                       helm-swoop-move-to-line-cycle t
                       helm-swoop-use-fuzzy-match nil
-                      helm-swoop-speed-or-color t))
+                      helm-swoop-speed-or-color t
+                      helm-swoop-split-direction 'split-window-horizontally))
 
 (use-package helm-rg
   :bind ("C-c r g" .  helm-rg))
@@ -1275,6 +1276,24 @@
 
 (add-hook 'org-mode-hook 'org-fragtog-mode)
 
+
+(defun pdf-occur-jump-to-new-buffer ()
+  "After searching, jumps to new opened buffer"
+  (interactive)
+  (pdf-occur (read-string "Enter search regex: "))
+  (pop-to-buffer "*PDF-Occur*")
+  (set-window-parameter (selected-window) 'no-other-window t))
+
+(defun pdf-occur-goto-occurence-kill-search-buffer ()
+  "After enter button, pdf occur buffer is closed"
+  (interactive)
+  (pdf-occur-goto-occurrence)
+  (kill-buffer "*PDF-Occur*"))
+
 ;; PDF arrangements
 (add-hook 'pdf-view-mode-hook
           (lambda () (local-set-key (kbd "M-w") #'pdf-view-kill-ring-save)))
+(add-hook 'pdf-view-mode-hook
+          (lambda () (local-set-key (kbd "C-s") #'pdf-occur-jump-to-new-buffer)))
+(add-hook 'pdf-occur-buffer-mode-hook
+          (lambda () (local-set-key (kbd "<return>") #'pdf-occur-goto-occurence-kill-search-buffer)))
