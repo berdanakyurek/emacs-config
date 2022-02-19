@@ -650,6 +650,7 @@
 (use-package org
   :init
   (setq-default org-adapt-indentation t
+
                 org-catch-invisible-edits 'show-and-error
                 org-cycle-separator-lines 0
                 org-directory (concat user-data-directory "/Notes")
@@ -676,6 +677,7 @@
   :bind (:map org-mode-map ("C-c C-." . org-time-stamp-inactive)))
 
 (add-hook 'org-mode-hook #'org-bullets-mode)
+(setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3))
 
 (use-package org-babel :ensure nil
   :config
