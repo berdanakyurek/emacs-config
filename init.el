@@ -46,7 +46,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defvar user-data-directory (getenv "EMACS_STORAGE_LOCATION"))
 (unless user-data-directory
-  (setq user-data-directory "~/Documents"))
+  (setq user-data-directory "~/"))
 
 (setq-default user-full-name "Berdan Akyurek"
               user-mail-address "berdanakyurek17@gmail.com"
@@ -492,7 +492,7 @@
 (use-package elfeed)
 ;; Load elfeed-org
 (require 'elfeed-org)
-(setq rmh-elfeed-org-files (list "~/Documents/Notes/elfeed.org"))
+(setq rmh-elfeed-org-files (list "~/Dropbox/Notes/elfeed.org"))
 (elfeed-org)
 ;; (add-hook 'emacs-startup-hook (lambda () (run-at-time 5 5 'elfeed-update)))
 
@@ -653,7 +653,7 @@
 
                 org-catch-invisible-edits 'show-and-error
                 org-cycle-separator-lines 0
-                org-directory (concat user-data-directory "/Notes")
+                org-directory (concat user-data-directory "Dropbox/Notes")
                 org-edit-src-content-indentation 0
                 org-fontify-quote-and-verse-blocks t
                 org-fontify-done-headline t
@@ -1301,3 +1301,35 @@
           (lambda () (local-set-key (kbd "C-s") #'pdf-occur-jump-to-new-buffer)))
 (add-hook 'pdf-occur-buffer-mode-hook
           (lambda () (local-set-key (kbd "<return>") #'pdf-occur-goto-occurence-kill-search-buffer)))
+
+;; MATLAB
+
+;;(add-to-list 'load-path "/usr/local/bin")
+(autoload 'matlab-mode "matlab" "Matlab Editing Mode" t)
+(add-to-list
+  'auto-mode-alist
+  '("\\.m$" . matlab-mode))
+ (setq matlab-indent-function t)
+(setq matlab-shell-command "matlab")
+
+(setq-default gac-automatically-push-p t)
+(setq-default gac-default-message "Auto commited with git-auto-commit-mode")
+(add-to-list 'auto-minor-mode-alist '("~/Dropbox/Notes/*" . git-auto-commit-mode))
+
+(defun org-count-words ()
+  "Count words in the current buffer ignoring comments"
+  (interactive)
+  (save-excursion
+    (if (use-region-p)
+        (narrow-to-region (region-beginning) (region-end)))
+    (goto-char (point-min))
+    (let ((words 0) (beginning (point)))
+      (while (search-forward "#+BEGIN_COMMENT" nil t)
+        (backward-char 15)
+        (setq words (+ words (count-words beginning (point))))
+        (search-forward "#+END_COMMENT" nil t)
+        (setq beginning (point)))
+      (goto-char (point-max))
+      (setq words (+ words (count-words beginning (point))))
+      (message (format "Total words: %d" words))
+      (widen))))
