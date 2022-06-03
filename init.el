@@ -22,7 +22,6 @@
 
 (setq origami-parser-alist '())
 ;; Init Done
-
 ;; Debug
 ;; (require 'benchmark-init)
 ;; (add-hook 'after-init-hook 'benchmark-init/deactivate)
@@ -588,7 +587,7 @@
 (use-package hl-todo :config (global-hl-todo-mode))
 
 (use-package flycheck
-  :config (global-flycheck-mode)
+  :hook (prog-mode . flycheck-mode)
   :init (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc verilog-verilator)))
 
 (use-package flycheck-pos-tip
@@ -1344,3 +1343,7 @@
 
 (add-hook 'pdf-view-mode-hook
           (lambda () (local-set-key (kbd "C-x t g") #'tureng-translate-pdf)))
+
+(setq flycheck-display-errors-delay 0)
+(setq flycheck-idle-buffer-switch-delay 0)
+(setq flycheck-idle-change-delay 0)
