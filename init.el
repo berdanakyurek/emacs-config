@@ -1299,6 +1299,7 @@
           (lambda () (local-set-key (kbd "M-w") #'pdf-view-kill-ring-save)))
 (add-hook 'pdf-view-mode-hook
           (lambda () (local-set-key (kbd "C-s") #'pdf-occur-jump-to-new-buffer)))
+
 (add-hook 'pdf-occur-buffer-mode-hook
           (lambda () (local-set-key (kbd "<return>") #'pdf-occur-goto-occurence-kill-search-buffer)))
 
@@ -1333,3 +1334,13 @@
       (setq words (+ words (count-words beginning (point))))
       (message (format "Total words: %d" words))
       (widen))))
+
+(setq flycheck-emacs-lisp-load-path 'inherit)
+
+(use-package tureng-translate
+  :quelpa (tureng-translate :fetcher github :repo "berdanakyurekk/emacs-tureng-translate")
+  :demand t
+  :bind ("C-x t g" . tureng-translate))
+
+(add-hook 'pdf-view-mode-hook
+          (lambda () (local-set-key (kbd "C-x t g") #'tureng-translate-pdf)))
