@@ -294,7 +294,7 @@
         dashboard-items '((recents  . 5)
                           (bookmarks . 5)
                           (projects . 5))
-        dashboard-banner-logo-title "Ve düşmanlar ki kanıma susamışlar, kanlarına susamışım."))
+        dashboard-banner-logo-title "Emacs"))
 ;;Test
 (setq dashboard-set-heading-icons t)
 
@@ -418,7 +418,7 @@
 
 (use-package diminish)
 
-(use-package darkokai-theme :init (load-theme 'darkokai t))
+(use-package monokai-theme :init (load-theme 'monokai t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;          Tools & Utils          ;;
@@ -1347,3 +1347,25 @@
 (setq flycheck-display-errors-delay 0)
 (setq flycheck-idle-buffer-switch-delay 0)
 (setq flycheck-idle-change-delay 0)
+;; React
+(setq-default js2-basic-offset 2)
+(setq-default js-indent-level 2)
+(defun my-web-mode-hook ()
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-indent-style 2)
+  )
+(add-hook 'web-mode-hook  'my-web-mode-hook)
+
+
+
+(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+(defun web-mode-init-hook ()
+  "Hooks for Web mode.  Adjust indent."
+  (setq web-mode-markup-indent-offset 2))
+
+(add-hook 'web-mode-hook  'web-mode-init-hook)
+
+(global-auto-revert-mode t)
