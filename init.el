@@ -3,7 +3,7 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -270,6 +270,7 @@
 ;; (global-set-key (kbd "C-c <left>") 'hs-hide-block)
 ;; (global-set-key (kbd "C-c <down>") 'hs-toggle-hiding)
 (global-set-key (kbd "C-c r e") 'restart-emacs)
+(global-set-key (kbd "C-c g r") #'projectile-ripgrep)
 
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 (define-key prog-mode-map (kbd "<tab>") 'indent-for-tab-command)
@@ -360,15 +361,18 @@
 ;; (use-package helm-fd
 ;;   :bind ("C-c h f" . helm-fd))
 
-(use-package helm-swoop
+;; (use-package helm-swoop
+;;   :bind
+;;   ("C-s" . helm-swoop)
+;;   ("C-c h h" . helm-swoop-back-to-last-point)
+;;   :init (setq-default helm-swoop-split-with-multiple-windows nil
+;;                       helm-swoop-move-to-line-cycle t
+;;                       helm-swoop-use-fuzzy-match nil
+;;                       helm-swoop-speed-or-color t
+;;                       helm-swoop-split-direction 'split-window-horizontally))
+(use-package helm-occur
   :bind
-  ("C-s" . helm-swoop)
-  ("C-c h h" . helm-swoop-back-to-last-point)
-  :init (setq-default helm-swoop-split-with-multiple-windows nil
-                      helm-swoop-move-to-line-cycle t
-                      helm-swoop-use-fuzzy-match nil
-                      helm-swoop-speed-or-color t
-                      helm-swoop-split-direction 'split-window-horizontally))
+  ("C-s" . helm-occur))
 
 (use-package helm-rg
   :bind ("C-c r g" .  helm-rg))
@@ -554,12 +558,12 @@
 
 
 ;; Generic
-(setq company-idle-delay 0.01)
+(setq company-idle-delay 0)
 (use-package company
   :diminish company-mode
   :commands company-complete
   :hook (after-init . global-company-mode)
-  :init (setq-default company-idle-delay 0.01))
+  :init (setq-default company-idle-delay 0))
 
 (use-package helm-company
   :after helm company
@@ -578,7 +582,19 @@
 ;;   :config (setq-default company-lsp-enable-recompletion t
 ;;                         company-lsp-enable-snippet t))
 
-(use-package magit :bind ("C-c g s" . magit-status))
+(use-package magit
+  :bind ("C-c g s" . magit-status)
+  :config
+  (setq magit-wip-merge-branch t))
+
+(use-package magit-wip
+  :after magit
+  :config
+  (magit-wip-before-change-mode)
+  (magit-wip-after-apply-mode)
+  (magit-wip-after-save-mode))
+
+(add-hook 'before-save-hook 'magit-wip-commit-initial-Backup)
 
 (use-package magit-todos :config (magit-todos-mode))
 
@@ -881,9 +897,9 @@
 
 (use-package lsp-treemacs :config (lsp-treemacs-sync-mode 1))
 
-(use-package treemacs-persp
-  :after treemacs persp-mode
-  :config (treemacs-set-scope-type 'Perspectives))
+;; (use-package treemacs-persp
+;;   :after treemacs persp-mode
+;;   :config (treemacs-set-scope-type 'Perspectives))
 
 (use-package dockerfile-mode
   :mode ("Dockerfile\\'" "\\.docker"))
@@ -1227,10 +1243,7 @@
        (split-window-below)
        (other-window 1)
        (elfeed)
-       (other-window 1))
-    )
-
-  )
+       (other-window 1))))
 
 
 (add-hook 'window-setup-hook #'my-init-hook)
@@ -1337,7 +1350,7 @@
 (setq flycheck-emacs-lisp-load-path 'inherit)
 
 (use-package tureng-translate
-  :quelpa (tureng-translate :fetcher github :repo "berdanakyurekk/emacs-tureng-translate")
+  :quelpa (tureng-translate :fetcher github :repo "berdanakyurek/emacs-tureng-translate")
   :demand t
   :bind ("C-x t g" . tureng-translate))
 
@@ -1361,7 +1374,12 @@
 
 
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
+(add-to-list 'auto-minor-mode-alist '("\\.tsx?$" . tide-mode))
+
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
+
+
 (defun web-mode-init-hook ()
   "Hooks for Web mode.  Adjust indent."
   (setq web-mode-markup-indent-offset 2))
@@ -1369,3 +1387,22 @@
 (add-hook 'web-mode-hook  'web-mode-init-hook)
 
 (global-auto-revert-mode t)
+
+(setq helm-split-window-default-side 'right)
+
+(setq helm-always-two-windows t)
+(setq helm-split-window-inside-p nil)
+
+(add-hook 'web-mode-hook #'lsp-deferred)
+
+;; (setq lsp-use-plists t)
+
+(setq package-native-compile t)
+(setq helm-ff-icon-mode nil)
+(helm-ff-icon-mode -1)
+
+(setq helm-occur-buffer-substring-default-mode 'buffer-substring)
+
+(global-subword-mode 1)
+
+(global-set-key (kbd "M-F") '(call-interactively #'forward-word-strictly))
