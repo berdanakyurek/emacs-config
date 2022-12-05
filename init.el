@@ -1394,7 +1394,7 @@
 (setq helm-always-two-windows t)
 (setq helm-split-window-inside-p nil)
 
-(add-hook 'web-mode-hook #'lsp-deferred)
+;; (add-hook 'web-mode-hook #'lsp-deferred)
 
 ;; (setq lsp-use-plists t)
 
@@ -1407,3 +1407,11 @@
 (global-subword-mode 1)
 
 (global-set-key (kbd "M-F") '(call-interactively #'forward-word-strictly))
+
+;; Save kill ring history 
+(savehist-mode 1)
+(add-to-list 'savehist-additional-variables 'kill-ring)
+
+(global-undo-tree-mode)
+(setq undo-tree-auto-save-history t)
+(setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
