@@ -3,7 +3,6 @@
 
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
-
 (package-initialize)
 
 (unless (package-installed-p 'use-package)
@@ -12,7 +11,9 @@
 (require 'use-package)
 
 (setq-default use-package-always-defer t)
-;;(setq-default use-package-always-ensure t)
+
+;; Uncomment this on first installation to install all packages
+;; (setq-default use-package-always-ensure t)
 
 (setq custom-file "~/.emacs.d/elisp/custom.el")
 (load custom-file)
@@ -309,7 +310,6 @@
   :diminish helm-mode
   :commands helm-autoresize-mode
   :config
-  (require 'helm-config)
   (helm-mode 1)
   (helm-autoresize-mode 1)
   (global-unset-key (kbd "C-x c"))
@@ -317,11 +317,12 @@
   (("M-x" . helm-M-x)
    ;; ("C-s" . helm-occur)
    ("C-x b" . helm-mini)
-   ("C-z" .  helm-select-action)
+   ("C-Z" .  helm-select-action)
    ("M-y" . helm-show-kill-ring)
    ("C-c s" . isearch-forward)
    ("C-c C-r" . helm-resume)
    ("<f6>" . helm-imenu)
+   ("C-s" . helm-occur)
    :map helm-map
    ("TAB" . 'helm-execute-persistent-action)
    ("<tab>" . helm-execute-persistent-action)
@@ -370,9 +371,7 @@
 ;;                       helm-swoop-use-fuzzy-match nil
 ;;                       helm-swoop-speed-or-color t
 ;;                       helm-swoop-split-direction 'split-window-horizontally))
-(use-package helm-occur
-  :bind
-  ("C-s" . helm-occur))
+
 
 (use-package helm-rg
   :bind ("C-c r g" .  helm-rg))
@@ -587,12 +586,12 @@
   :config
   (setq magit-wip-merge-branch t))
 
-(use-package magit-wip
-  :after magit
-  :config
-  (magit-wip-before-change-mode)
-  (magit-wip-after-apply-mode)
-  (magit-wip-after-save-mode))
+;; (use-package magit-wip
+;;   :after magit
+;;   :config
+;;   (magit-wip-before-change-mode)
+;;   (magit-wip-after-apply-mode)
+;;   (magit-wip-after-save-mode))
 
 (add-hook 'before-save-hook 'magit-wip-commit-initial-Backup)
 
@@ -691,6 +690,7 @@
   (org-mode . auto-fill-mode)
   :bind (:map org-mode-map ("C-c C-." . org-time-stamp-inactive)))
 
+(use-package org-bullets)
 (add-hook 'org-mode-hook #'org-bullets-mode)
 (setq org-format-latex-options (plist-put org-format-latex-options :scale 1.3))
 
@@ -791,7 +791,8 @@
                 ;; lsp-auto-configure t
                 ;; lsp-idle-delay 0.500
                 read-process-output-max (* 2 1024 1024)
-                lsp-enable-on-type-formatting nil))
+                lsp-enable-on-type-formatting nil)
+  :bind (:map lsp-mode-map ("<f12>" . lsp-find-definiton)))
 
 ;; (use-package lsp-ui
 ;;   :init
@@ -896,6 +897,14 @@
 (use-package treemacs-magit :after treemacs magit)
 
 (use-package lsp-treemacs :config (lsp-treemacs-sync-mode 1))
+
+(use-package perspective
+  :bind
+  ("C-x C-b" . persp-list-buffers)
+  :custom
+  (persp-mode-prefix-key (kbd "C-z"))
+  :init
+  (persp-mode))
 
 ;; (use-package treemacs-persp
 ;;   :after treemacs persp-mode
@@ -1278,8 +1287,9 @@
 (global-set-key (kbd "C-c m") 'mark-more-like-this-extended)
 
 ;; Auto Highlight Symbol Mode
-(use-package ahs)
+(use-package auto-highlight-symbol)
 (add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
+
 (custom-set-faces
  '(ahs-face ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold))))
  '(ahs-face-unfocused ((t (:background "#525765" :foreground "#AEAFB1" :weight extra-bold))))
@@ -1327,6 +1337,8 @@
 
 (setq-default gac-automatically-push-p t)
 (setq-default gac-default-message "Auto commited with git-auto-commit-mode")
+(use-package auto-minor-mode)
+
 (add-to-list 'auto-minor-mode-alist '("~/Dropbox/Notes/*" . git-auto-commit-mode))
 
 (defun org-count-words ()
@@ -1376,7 +1388,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
-(add-to-list 'auto-minor-mode-alist '("\\.tsx?$" . tide-mode))
 
 (setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
 
@@ -1394,7 +1405,7 @@
 (setq helm-always-two-windows t)
 (setq helm-split-window-inside-p nil)
 
-;; (add-hook 'web-mode-hook #'lsp-deferred)
+(add-hook 'web-mode-hook #'lsp-deferred)
 
 ;; (setq lsp-use-plists t)
 
@@ -1412,6 +1423,13 @@
 (savehist-mode 1)
 (add-to-list 'savehist-additional-variables 'kill-ring)
 
-(global-undo-tree-mode)
-(setq undo-tree-auto-save-history t)
 (setq undo-tree-history-directory-alist '(("." . "~/.emacs.d/undo")))
+(global-undo-tree-mode 1)
+(setq undo-tree-auto-save-history t)
+
+;; (add-hook 'csharp-mode-hook #'lsp-deferred)
+
+(setq undo-tree-enable-undo-in-region nil)
+
+(setq  tab-always-indent 'complete)
+
