@@ -10,9 +10,14 @@
   (package-install 'use-package))
 (require 'use-package)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Comment this on first installation to install all packages ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (setq-default use-package-always-defer t)
 
-;; Uncomment this on first installation to install all packages
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Uncomment this on first installation to install all packages ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (setq-default use-package-always-ensure t)
 
 (setq custom-file "~/.emacs.d/elisp/custom.el")
@@ -792,7 +797,7 @@
                 ;; lsp-idle-delay 0.500
                 read-process-output-max (* 2 1024 1024)
                 lsp-enable-on-type-formatting nil)
-  :bind (:map lsp-mode-map ("<f12>" . lsp-find-definiton)))
+  :bind (:map lsp-mode-map ("C-?" . lsp-find-references)))
 
 ;; (use-package lsp-ui
 ;;   :init
@@ -978,9 +983,6 @@
                         verilog-indent-level-declaration 2
                         verilog-indent-level-module 2))
 
-(defun bm-save-all ()
-  (progn (bm-buffer-save-all)
-         (bm-repository-save)))
 
 (use-package bm
   :after no-littering
@@ -1003,6 +1005,11 @@
          ("<left-fringe> <mouse-1>" . bm-toggle-mouse)
          ( "<left-fringe> <mouse-4>" . bm-previous-mouse)
          ( "<left-fringe> <mouse-5>" . bm-next-mouse)))
+
+(defun bm-save-all ()
+  (progn (bm-buffer-save-all)
+         (bm-repository-save)))
+
 
 (use-package beacon
   :init (beacon-mode 1)
@@ -1375,6 +1382,7 @@
 ;; React
 (setq-default js2-basic-offset 2)
 (setq-default js-indent-level 2)
+
 (defun my-web-mode-hook ()
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
@@ -1388,15 +1396,6 @@
 
 (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
-
-(setq web-mode-content-types-alist '(("jsx" . "\\.js[x]?\\'")))
-
-
-(defun web-mode-init-hook ()
-  "Hooks for Web mode.  Adjust indent."
-  (setq web-mode-markup-indent-offset 2))
-
-(add-hook 'web-mode-hook  'web-mode-init-hook)
 
 (global-auto-revert-mode t)
 
@@ -1427,9 +1426,37 @@
 (global-undo-tree-mode 1)
 (setq undo-tree-auto-save-history t)
 
-;; (add-hook 'csharp-mode-hook #'lsp-deferred)
+(use-package csharp-mode)
+(add-hook 'csharp-mode-hook #'lsp-deferred)
 
 (setq undo-tree-enable-undo-in-region nil)
 
 (setq  tab-always-indent 'complete)
+
+;; (use-package dap-mode)
+;; (require 'dap-node)
+;; (dap-node-setup)
+
+
+;; (setq dap-auto-configure-features '(sessions locals controls tooltip))
+;; (require 'dap-firefox)
+;; (require 'dap-chrome)
+
+(straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
+
+(straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28"))
+
+(add-hook 'csharp-mode-hook 'dotnet-mode)
+
+(use-package dap-mode
+  :commands (dap-debug dap-breakpoints-add)
+  :init
+  (dap-mode 1)
+  (dap-ui-mode 1)
+  (dap-auto-configure-mode)
+  (require 'dap-netcore)
+  :custom
+  (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/"))
+
+
 
