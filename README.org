@@ -1,0 +1,1 @@
+My configuration files for Emacs. Make the necessary changes in init.el described at the top of the file. Run first_installation.el after. 
