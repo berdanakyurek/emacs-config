@@ -265,7 +265,6 @@
 (global-set-key (kbd "M-n") 'scroll-up-in-place)
 (global-set-key (kbd "M-p") 'scroll-down-in-place)
 (global-set-key (kbd "<f7>") 'eww)
-(global-set-key (kbd "<f8>") 'vterm-toggle)
 (global-set-key (kbd "C-M-;") 'my-align-comments)
 (global-set-key (kbd "C-c C-k") 'kill-other-buffers)
 (global-set-key (kbd "C-c d") 'duplicate-line-or-region)
@@ -1148,13 +1147,21 @@
          (re-search-backward "msi.*\\$ " nil 'move)
          (re-search-forward "\\$ " nil 'move))
   :bind
-  ("<f8>" . vterm-toggle)
   (:map vterm-mode-map
-        ("M-w" . xah-copy-line-or-region)
-        ("<f8>" . vterm-toggle))
+        ("M-w" . xah-copy-line-or-region))
   (:map vterm-copy-mode-map
         ("C-<" . vterm-prev-prompt)
         ("C-," . vterm-next-prompt)))
+
+(use-package vterm-toggle
+  :custom (vterm-toggle-cd-auto-create-buffer nil)
+  :bind
+  ("<f8>" . vterm-toggle)
+  (:map vterm-mode-map
+        ("<f8>" . vterm-toggle)
+        ("C-c C-n"  . vterm-toggle-forward)
+        ("C-c C-p"  . vterm-toggle-backward)
+        ("C-<return>" . vterm-toggle-insert-cd)))
 
 (add-to-list 'load-path "~/.emacs.d/site-lisp/emacs-application-framework")
 
