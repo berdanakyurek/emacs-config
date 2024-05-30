@@ -306,7 +306,7 @@
         dashboard-items '((recents  . 5)
                           (bookmarks . 5)
                           (projects . 5))
-        
+
         dashboard-banner-logo-title "Emacs"))
 ;;Test
 (setq dashboard-set-heading-icons t)
@@ -328,7 +328,7 @@
   :bind
   (("M-x" . helm-M-x)
    ;; ("C-s" . helm-occur)
-   
+
    ("C-x b" . helm-mini)
    ("C-Z" .  helm-select-action)
    ("M-y" . helm-show-kill-ring)
@@ -603,7 +603,7 @@
 ;;   (magit-wip-after-apply-mode)
 ;;   (magit-wip-after-save-mode))
 
-(add-hook 'before-save-hook 'magit-wip-commit-initial-Backup)
+;; (add-hook 'before-save-hook 'magit-wip-commit-initial-Backup)
 
 (use-package magit-todos :config (magit-todos-mode))
 
@@ -952,9 +952,9 @@
 
 (use-package treemacs-projectile :after treemacs projectile)
 
-(use-package treemacs-persp
-  :after treemacs eyebrowse
-  :init (treemacs-set-scope-type 'Perspectives))
+;; (use-package treemacs-persp
+;;   :after treemacs eyebrowse
+;;   :init (treemacs-set-scope-type 'Perspectives))
 
 
 (use-package all-the-icons-ibuffer
@@ -1374,10 +1374,14 @@
       (message (format "Total words: %d" words))
       (widen))))
 
+(unless (package-installed-p 'vc-use-package)
+  (package-vc-install "https://github.com/slotThe/vc-use-package"))
+(require 'vc-use-package)
+
 (setq flycheck-emacs-lisp-load-path 'inherit)
 
 (use-package tureng-translate
-  :quelpa (tureng-translate :fetcher github :repo "berdanakyurek/emacs-tureng-translate")
+  :vc (tureng-translate :rev :newest :url "berdanakyurek/emacs-tureng-translate")
   :demand t
   :bind ("C-x t g" . tureng-translate))
 
