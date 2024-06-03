@@ -1395,6 +1395,7 @@
 (setq-default js2-basic-offset 2)
 (setq-default js-indent-level 2)
 
+(use-package web-mode)
 (defun my-web-mode-hook ()
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
@@ -1467,3 +1468,5 @@
   (require 'dap-netcore)
   :custom
   (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/"))
+
+(use-package csproj-mode)
