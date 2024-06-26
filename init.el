@@ -777,9 +777,13 @@
 
 (use-package meson-mode :hook (meson-mode . company-mode))
 
+(require 'lsp-diagnostics)
+
 (use-package lsp-mode
   :init
   (setq-default lsp-auto-execute-action nil
+                lsp-eslint-enable t
+                lsp-eslint-server-command '("vscode-eslint-language-server" "--stdio")
                 lsp-before-save-edits nil
                 lsp-keymap-prefix "C-c C-l"
                 ;; lsp-auto-guess-root t
@@ -793,6 +797,8 @@
                 lsp-enable-text-document-color nil
                 lsp-enable-semantic-highlighting nil
                 lsp-enable-on-type-formatting nil
+                lsp-javascript-update-imports-on-file-move-enabled "never"
+                lsp-typescript-update-imports-on-file-move-enabled "never"
                 ;; lsp-auto-configure t
                 ;; lsp-idle-delay 0.500
                 read-process-output-max (* 2 1024 1024)
@@ -1467,6 +1473,10 @@
   (dap-auto-configure-mode)
   (require 'dap-netcore)
   :custom
-  (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/"))
+  (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/")
+  (dap-netcore-download-url "https://github.com/Samsung/netcoredbg/releases/download/3.1.0-1031/netcoredbg-linux-amd64.tar.gz"))
 
 (use-package csproj-mode)
+
+(defun current-buffer-filename-without-extension ()
+  (car (split-string (car (last (split-string (buffer-file-name) "/"))) "\\.")))
