@@ -4,6 +4,4 @@
 !first_installation.el
 !README.org
 
-!/config/
-/config/*
-!/config/yasnippet/
+!config/

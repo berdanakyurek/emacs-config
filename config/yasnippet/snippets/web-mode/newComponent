@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: newComponent
+# key: newComponent
+# --
+import React from 'react';
+
+function `(current-buffer-filename-without-extension)`():JSX.Element {
+  return (
+    <>`(current-buffer-filename-without-extension)`</>
+  );
+}
+export default `(current-buffer-filename-without-extension)`;
