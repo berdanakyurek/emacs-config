@@ -3,4 +3,4 @@
 !init.el
 !first_installation.el
 !README.org
-!config
+!**/yasnippet
