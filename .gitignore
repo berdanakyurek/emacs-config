@@ -5,5 +5,5 @@
 !README.org
 
 !/config/
-/config/**
-!/config/yasnippet/**
+/config/*
+!/config/yasnippet/
