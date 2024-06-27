@@ -1,0 +1,19 @@
+# -*- mode: snippet -*-
+# name: exportFromMui
+# key: exportFromMui
+# --
+import React from 'react';
+import { `(current-buffer-filename-without-extension)` as Mui`(current-buffer-filename-without-extension)`, `(current-buffer-filename-without-extension)`Props } from '@mui/material';
+
+export interface I`(current-buffer-filename-without-extension)`Props extends `(current-buffer-filename-without-extension)`Props {
+}
+
+function `(current-buffer-filename-without-extension)`(props: I`(current-buffer-filename-without-extension)`Props): JSX.Element {
+  return (
+    <Mui`(current-buffer-filename-without-extension)` {...props}>
+      {props.children}
+    </Mui`(current-buffer-filename-without-extension)`>
+  );
+}
+
+export default `(current-buffer-filename-without-extension)`;
