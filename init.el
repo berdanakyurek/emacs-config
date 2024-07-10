@@ -349,19 +349,7 @@
       'below
     'right))
 
-(helm-split-window-side)
-
 (defun helm-split-window-custom (window)
-  "Default function to split windows before displaying `helm-buffer'.
-
-It is used as default value for
-`helm-split-window-preferred-function' which is then the
-let-bounded value of `split-window-preferred-function' in
-`helm-display-buffer'.  When `helm-display-function' which default
-to `helm-default-display-buffer' is called from
-`helm-display-buffer' the value of
-`split-window-preferred-function' will be used by
-`display-buffer'."
   (let* ((split-width-threshold (and (integerp helm-split-width-threshold)
                                      helm-split-width-threshold))
          (hswd (helm-split-window-side))
