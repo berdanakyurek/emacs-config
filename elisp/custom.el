@@ -4,11 +4,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(c-noise-macro-names '("constexpr"))
- '(lsp-javascript-update-imports-on-file-move-enabled "never")
- '(lsp-typescript-update-imports-on-file-move-enabled "never")
+ '(lsp-javascript-update-imports-on-file-move-enabled "never" t)
+ '(lsp-typescript-update-imports-on-file-move-enabled "never" t)
  '(package-selected-packages '(emacsconf-update dashboard))
  '(package-vc-selected-packages
-   '((vc-use-package :vc-backend Git :url "https://github.com/slotThe/vc-use-package"))))
+   '((vc-use-package :vc-backend Git :url "https://github.com/slotThe/vc-use-package")))
+ '(warning-suppress-types '((emacs))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

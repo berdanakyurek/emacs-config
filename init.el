@@ -21,6 +21,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (setq-default use-package-always-ensure t)
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set this as t if vertical screen is used, set as nil otherwise ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun is-frame-vertical ()
+    (> (frame-pixel-height) (frame-pixel-width)))
+
 (setq custom-file "~/.emacs.d/elisp/custom.el")
 (load custom-file)
 (add-to-list 'load-path (concat user-emacs-directory "elisp/"))
@@ -48,6 +57,7 @@
                 auto-save-file-name-transforms `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
   (add-to-list 'recentf-exclude no-littering-var-directory)
   (add-to-list 'recentf-exclude no-littering-etc-directory))
+
 (defvar use-other-window-alist
   '((display-buffer-use-some-window display-buffer-pop-up-window)
     (inhibit-same-window . t)))
@@ -283,6 +293,22 @@
 (global-set-key (kbd "C-c r e") 'restart-emacs)
 (global-set-key (kbd "C-c g r") #'projectile-ripgrep)
 
+
+(defun split-window-primary ()
+  (interactive)
+    (if (is-frame-vertical)
+        (split-window-below)
+      (split-window-right)))
+
+(defun split-window-secondary ()
+  (interactive)
+    (if (is-frame-vertical)
+        (split-window-right)
+      (split-window-below)))
+
+(global-set-key (kbd "C-x 3") 'split-window-primary)
+(global-set-key (kbd "C-x 2") 'split-window-secondary)
+
 (global-set-key [remap fill-paragraph] #'endless/fill-or-unfill)
 (define-key prog-mode-map (kbd "<tab>") 'indent-for-tab-command)
 
@@ -316,6 +342,63 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;          Helm          ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(defun helm-split-window-side ()
+  (if (is-frame-vertical)
+      'below
+    'right))
+
+(helm-split-window-side)
+
+(defun helm-split-window-custom (window)
+  "Default function to split windows before displaying `helm-buffer'.
+
+It is used as default value for
+`helm-split-window-preferred-function' which is then the
+let-bounded value of `split-window-preferred-function' in
+`helm-display-buffer'.  When `helm-display-function' which default
+to `helm-default-display-buffer' is called from
+`helm-display-buffer' the value of
+`split-window-preferred-function' will be used by
+`display-buffer'."
+  (let* ((split-width-threshold (and (integerp helm-split-width-threshold)
+                                     helm-split-width-threshold))
+         (hswd (helm-split-window-side))
+         (win (if (and (fboundp 'window-in-direction)
+                       ;; Don't try to split when starting in a minibuffer
+                       ;; e.g M-: and try to use helm-show-kill-ring.
+                       (not (minibufferp helm-current-buffer))
+                       (null helm-split-width-threshold))
+                  (if (or (one-window-p t)
+                          helm-split-window-inside-p)
+                      (split-window
+                       (selected-window) nil
+                       (if (eq hswd 'other)
+                           helm-split-window-other-side-when-one-window
+                         hswd))
+                    ;; If more than one window reuse one of them.
+                    (cl-case hswd
+                      (left  (or (helm-window-in-direction 'left)
+                                 (helm-window-in-direction 'above)
+                                 (selected-window)))
+                      (above (or (helm-window-in-direction 'above)
+                                 (helm-window-in-direction 'left)
+                                 (selected-window)))
+                      (right (or (helm-window-in-direction 'right)
+                                 (helm-window-in-direction 'below)
+                                 (selected-window)))
+                      (below (or (helm-window-in-direction 'below)
+                                 (helm-window-in-direction 'right)
+                                 (selected-window)))
+                      (same  (selected-window))
+                      (other (or (helm-other-window-for-scrolling)
+                                 (selected-window)))
+                      (t     (or (window-next-sibling) (selected-window)))))
+                (split-window-sensibly window))))
+    (setq helm-persistent-action-window-buffer (window-buffer win))
+    win))
+
 ;; Helm packages for other modules will be near their corresponding modules, not in here
 (use-package helm
   :diminish helm-mode
@@ -325,6 +408,7 @@
   (helm-autoresize-mode 1)
   (global-unset-key (kbd "C-x c"))
   (setq helm-occur-buffer-substring-default-mode 'buffer-substring)
+  (add-to-list 'display-buffer-alist (cons "\\*helm" use-other-window-alist))
   :bind
   (("M-x" . helm-M-x)
    ;; ("C-s" . helm-occur)
@@ -353,7 +437,11 @@
                 helm-imenu-fuzzy-match t
                 helm-substitute-in-filename-stay-on-remote t
                 helm-boring-buffer-regexp-list (list (rx "*magit-") (rx "*helm") (rx "*flycheck"))
-                helm-split-window-inside-p t
+                helm-split-window-inside-p nil
+                helm-split-window-preferred-function 'helm-split-window-custom
+                ;; helm-split-window-default-side (if screen-vertical 'below 'right)
+                ;; helm-split-window-default-side 'other
+                helm-always-two-windows t
                 helm-move-to-line-cycle-in-source t
                 helm-scroll-amount 8))
 
@@ -371,20 +459,6 @@
                 bibtex-completion-notes-path (concat user-data-directory "/Notes/helm-bibtex-notes")))
 
 (use-package helm-tramp)
-
-;; (use-package helm-fd
-;;   :bind ("C-c h f" . helm-fd))
-
-;; (use-package helm-swoop
-;;   :bind
-;;   ("C-s" . helm-swoop)
-;;   ("C-c h h" . helm-swoop-back-to-last-point)
-;;   :init (setq-default helm-swoop-split-with-multiple-windows nil
-;;                       helm-swoop-move-to-line-cycle t
-;;                       helm-swoop-use-fuzzy-match nil
-;;                       helm-swoop-speed-or-color t
-;;                       helm-swoop-split-direction 'split-window-horizontally))
-
 
 (use-package helm-rg
   :bind ("C-c r g" .  helm-rg))
@@ -613,7 +687,7 @@
 
 (use-package flycheck
   :hook (prog-mode . flycheck-mode)
-  :init (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc verilog-verilator)))
+  :init (setq-default flycheck-disabled-checkers '(emacs-lisp-checkdoc verilog-verilator )))
 
 (use-package flycheck-pos-tip
   :after flycheck
@@ -1263,31 +1337,6 @@
 
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 
-
-(defun my-init-hook ()
-  (if (equal (buffer-name) "*dashboard*")
-      (progn
-       (split-window-right)
-       (let ((org-agenda-window-setup 'other-window))
-         (org-agenda nil "a"))
-       (split-window-below)
-       (other-window 1)
-       (elfeed)
-       (other-window 1))))
-
-
-;; (add-hook 'window-setup-hook #'my-init-hook)
-
-;; Start with agenda on right
-;; (org-agenda-list)
-;; (delete-other-windows)
-;; (split-window-right)
-;; (switch-to-buffer "*dashboard*")
-;;
-
-;;(split-window-below)
-;;(elfeed)
-
 ;;;;;;;;;;;
 ;; HYDRA ;;
 ;;;;;;;;;;;
@@ -1401,29 +1450,8 @@
 (setq-default js2-basic-offset 2)
 (setq-default js-indent-level 2)
 
-(use-package web-mode)
-(defun my-web-mode-hook ()
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-indent-style 2)
-  (setq web-mode-enable-auto-quoting nil)
-  )
-(add-hook 'web-mode-hook  'my-web-mode-hook)
-
-
-
-(add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.tsx?$" . web-mode))
 
 (global-auto-revert-mode t)
-
-(setq helm-split-window-default-side 'right)
-
-(setq helm-always-two-windows t)
-(setq helm-split-window-inside-p nil)
-
-(add-hook 'web-mode-hook #'lsp-deferred)
 
 ;; (setq lsp-use-plists t)
 
@@ -1459,9 +1487,28 @@
 ;; (require 'dap-firefox)
 ;; (require 'dap-chrome)
 
+(require 'eglot)
+(require 'treesit)
+(use-package coverlay)
+(use-package origami)
+(use-package corfu)
+
+;; (setq eglot-server-programs (list))
+
+(straight-use-package '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
 (straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
 
-(straight-use-package '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs28"))
+(use-package tsx-mode
+  :straight '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
+
+(add-to-list 'auto-mode-alist '("\\.[jt]s[x]?\\'" . tsx-mode))
+
+(defun my-tsx-mode-hook ()
+  (flycheck-mode nil)
+  (flymake-eslint-enable))
+
+(add-hook 'tsx-mode-hook  'my-tsx-mode-hook)
+
 
 (add-hook 'csharp-mode-hook 'dotnet-mode)
 
@@ -1480,3 +1527,7 @@
 
 (defun current-buffer-filename-without-extension ()
   (car (split-string (car (last (split-string (buffer-file-name) "/"))) "\\.")))
+
+
+(add-hook 'projectile-mode-hook
+          (lambda () (setq-local flymake-eslint-project-root (projectile-project-root))))
