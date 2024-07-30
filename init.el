@@ -21,12 +21,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; (setq-default use-package-always-ensure t)
 
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Set this as t if vertical screen is used, set as nil otherwise ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
 (defun is-frame-vertical ()
     (> (frame-pixel-height) (frame-pixel-width)))
 
@@ -1506,6 +1500,8 @@
   (dap-mode 1)
   (dap-ui-mode 1)
   (dap-auto-configure-mode)
+  ;; (setq dap-auto-configure-features '(sessions locals breakpoints expressions repl controls tooltip))
+
   (require 'dap-netcore)
   :custom
   (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/")
@@ -1519,3 +1515,8 @@
 
 (add-hook 'projectile-mode-hook
           (lambda () (setq-local flymake-eslint-project-root (projectile-project-root))))
+
+(use-package sharper
+  :demand t
+  :bind
+  ("C-c n" . sharper-main-transient))
