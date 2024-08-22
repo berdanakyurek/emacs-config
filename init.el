@@ -1417,10 +1417,10 @@
 
 (setq flycheck-emacs-lisp-load-path 'inherit)
 
-(use-package tureng-translate
-  :vc (tureng-translate :rev :newest :url "berdanakyurek/emacs-tureng-translate")
-  :demand t
-  :bind ("C-x t g" . tureng-translate))
+;; (use-package tureng-translate
+;;   :vc (tureng-translate :rev :newest :url "berdanakyurek/emacs-tureng-translate")
+;;   :demand t
+;;   :bind ("C-x t g" . tureng-translate))
 
 (add-hook 'pdf-view-mode-hook
           (lambda () (local-set-key (kbd "C-x t g") #'tureng-translate-pdf)))
@@ -1520,3 +1520,13 @@
   :demand t
   :bind
   ("C-c n" . sharper-main-transient))
+
+
+;; Create a directory for Emacs lock files
+(setq lock-file-directory (concat user-emacs-directory "locks/"))
+(unless (file-exists-p lock-file-directory)
+  (make-directory lock-file-directory))
+
+;; Set Emacs to use the lock file directory
+(setq lock-file-name-transforms
+      `((".*" ,lock-file-directory t)))
