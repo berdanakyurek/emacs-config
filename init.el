@@ -1530,3 +1530,9 @@
 ;; Set Emacs to use the lock file directory
 (setq lock-file-name-transforms
       `((".*" ,lock-file-directory t)))
+
+(use-package direnv)
+
+(use-package latex-preview-pane
+  :custom
+  (pdf-latex-command "lualatex"))
