@@ -716,6 +716,11 @@
         ("C-c C-w l" . eyebrowse-switch-to-window-config)
         ("C-c C-w <right>" . eyebrowse-next-window-config)))
 
+(use-package eyebrowse-restore
+  :ensure t
+  :config
+  (eyebrowse-restore-mode))
+
 (use-package hungry-delete
   :commands global-hungry-delete-mode
   :init (global-hungry-delete-mode))
@@ -764,6 +769,8 @@
                               (shell . t)
                               (emacs-lisp . t)))
   :bind (:map org-mode-map ("C-c C-." . org-time-stamp-inactive)))
+
+(require 'ox-md)
 
 (use-package org-bullets)
 (add-hook 'org-mode-hook #'org-bullets-mode)
@@ -1355,6 +1362,8 @@
 
 (add-hook 'prog-mode-hook #'auto-highlight-symbol-mode)
 
+(use-package org-fragtog)
+
 (add-hook 'org-mode-hook 'org-fragtog-mode)
 
 
@@ -1541,3 +1550,18 @@
 (use-package latex-preview-pane
   :custom
   (pdf-latex-command "lualatex"))
+
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+(setq initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+
+(use-package copilot
+  :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
+  :hook (prog-mode . copilot-mode)
+  :ensure t
+  :config
+  (define-key copilot-completion-map (kbd "<tab>") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "TAB") 'copilot-accept-completion)
+  (define-key copilot-completion-map (kbd "C-<tab>") 'copilot-next-completion))
+
+(use-package copilot-chat)
