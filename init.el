@@ -273,7 +273,6 @@
 
 (global-set-key (kbd "M-n") 'scroll-up-in-place)
 (global-set-key (kbd "M-p") 'scroll-down-in-place)
-(global-set-key (kbd "<f7>") 'eww)
 (global-set-key (kbd "C-M-;") 'my-align-comments)
 (global-set-key (kbd "C-c C-k") 'kill-other-buffers)
 (global-set-key (kbd "C-c d") 'duplicate-line-or-region)
@@ -405,7 +404,6 @@
    ("M-y" . helm-show-kill-ring)
    ("C-c s" . isearch-forward)
    ("C-c C-r" . helm-resume)
-   ("<f6>" . helm-imenu)
    ("C-s" . helm-occur)
    :map helm-map
    ("TAB" . 'helm-execute-persistent-action)
@@ -1228,11 +1226,12 @@
         ("C-," . vterm-next-prompt)))
 
 (use-package vterm-toggle
-  :custom (vterm-toggle-cd-auto-create-buffer nil)
+  :custom
+  (vterm-toggle-cd-auto-create-buffer nil)
   :bind
-  ("<f8>" . vterm-toggle)
+  ("C-<f4>" . vterm-toggle)
   (:map vterm-mode-map
-        ("<f8>" . vterm-toggle)
+        ("C-<f4>" . vterm-toggle)
         ("C-c C-n"  . vterm-toggle-forward)
         ("C-c C-p"  . vterm-toggle-backward)
         ("C-<return>" . vterm-toggle-insert-cd)))
@@ -1246,10 +1245,10 @@
   (hs-hide-block))
 
 (setq erc-server "irc.libera.chat"
-      erc-nick "ararat"
-      erc-user-full-name "unknown"
+      erc-nick "berdan"
+      erc-user-full-name "Berdan Akyurek"
       erc-track-shorten-start 8
-      erc-autojoin-channels-alist '(("irc.libera.chat" "#systemcrafters" "#emacs"))
+      erc-autojoin-channels-alist '(("irc.libera.chat"))
       erc-kill-buffer-on-part t
       erc-auto-query 'bury)
 
@@ -1468,7 +1467,7 @@
 (setq undo-tree-auto-save-history t)
 
 (use-package csharp-mode)
-(add-hook 'csharp-mode-hook #'lsp-deferred)
+;; (add-hook 'csharp-mode-hook #'lsp-deferred)
 
 (setq undo-tree-enable-undo-in-region nil)
 
@@ -1489,14 +1488,17 @@
 (use-package origami)
 (use-package corfu)
 
-;; (setq eglot-server-programs (list))
+;; (add-to-list 'eglot-server-programs
+;;              '(csharp-mode . ("csharp-ls")))
+(add-hook 'csharp-mode-hook 'eglot-ensure)
+(add-hook 'tsx-mode-hook 'eglot-ensure)
+
 
 (straight-use-package '(css-in-js-mode :type git :host github :repo "orzechowskid/tree-sitter-css-in-js"))
 (straight-use-package '(tsi :type git :host github :repo "orzechowskid/tsi.el"))
 
 (use-package tsx-mode
   :straight '(tsx-mode :type git :host github :repo "orzechowskid/tsx-mode.el" :branch "emacs29"))
-
 (add-to-list 'auto-mode-alist '("\\.[jt]s[x]?\\'" . tsx-mode))
 
 (defun my-tsx-mode-hook ()
@@ -1513,13 +1515,45 @@
   :init
   (dap-mode 1)
   (dap-ui-mode 1)
-  (dap-auto-configure-mode)
+  ;; (dap-auto-configure-mode)
   ;; (setq dap-auto-configure-features '(sessions locals breakpoints expressions repl controls tooltip))
 
   (require 'dap-netcore)
   :custom
   (dap-netcore-install-dir "/home/berdan/.emacs.d/.cache/")
-  (dap-netcore-download-url "https://github.com/Samsung/netcoredbg/releases/download/3.1.0-1031/netcoredbg-linux-amd64.tar.gz"))
+  (dap-netcore-download-url "https://github.com/Samsung/netcoredbg/releases/download/3.1.0-1031/netcoredbg-linux-amd64.tar.gz")
+  (dap-default-configurations nil)
+  :bind
+  (:map dap-mode-map
+        ("<f5>" . dap-debug)
+        ("<f6>" . dap-continue)
+        ("<f7>" . dap-next)
+        ("<f8>" . dap-step-in)
+        ("<f9>" . dap-step-out)
+        ("<f10>" . dap-disconnect)
+        ("<f11>" . dap-breakpoint-toggle)
+        ("<f12>" . dap-breakpoints)
+        ("C-c d" . dap-hydra)))
+
+(defun dap-debug-all-in-solution ()
+  "Run all dap-debug profiles in the current solution (Emacs project)."
+  (interactive)
+  (let* ((root (project-root (project-current t)))
+         (launch-json (expand-file-name ".vscode/launch.json" root)))
+    (if (file-exists-p launch-json)
+        (let* ((json-object-type 'alist)
+               (json-array-type 'list)
+               (json-key-type 'string)
+               (profiles (cdr(assoc "configurations" (json-read-file launch-json)))))
+          (message "Profiles found: %s" profiles)
+          (if profiles
+              (progn
+                (message "Running dap-debug profiles in: %s" root)
+                (dolist (profile profiles)
+                  (message "Profile: %s" profile)
+                  (dap-debug profile)))
+            (message "No configurations found in launch.json.")))
+      (message "No .vscode/launch.json found in project root: %s" root))))
 
 (use-package csproj-mode)
 
